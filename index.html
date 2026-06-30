@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>AttendX - Biometric Student Terminal</title>
+    <title>AttendX - Pure Frontend Local Directory Terminal</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
     <style>
@@ -12,25 +12,42 @@
             --text: #eef2ff; --text-muted: #8fa3c0; --indigo: #6366f1; --indigo-light: #818cf8;
             --green: #10b981; --red: #f43f5e;
         }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 420px; padding: 36px 32px; box-shadow: 0 24px 80px rgba(0,0,0,0.5); }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 420px; padding: 36px 32px; box-shadow: 0 24px 80px rgba(0,0,0,0.5); margin-bottom: 25px; }
         .header { text-align: center; margin-bottom: 24px; }
         .logo-icon { width: 52px; height: 52px; background: var(--indigo); border-radius: 14px; display: grid; place-items: center; font-size: 1.5rem; color: #fff; margin: 0 auto 14px; font-weight: 800; }
         h2 { margin: 0 0 6px 0; font-size: 1.5rem; font-weight: 800; }
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab-btn { flex: 1; padding: 10px; background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); border-radius: 8px; cursor: pointer; font-weight: 600; }
-        .tab-btn.active { background: var(--indigo); color: #fff; border-color: var(--indigo-light); }
+        
+        .tabs { display: flex; gap: 6px; margin-bottom: 20px; background: var(--bg); padding: 4px; border-radius: 10px; border: 1px solid var(--border); }
+        .tab-btn { flex: 1; padding: 10px 6px; background: transparent; border: none; color: var(--text-muted); border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+        .tab-btn.active { background: var(--indigo); color: #fff; }
+        
         .camera-container { position: relative; width: 100%; height: 220px; background: #000; border-radius: 12px; overflow: hidden; border: 1.5px solid var(--border); margin-bottom: 20px; }
         video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
         .input-group { margin-bottom: 14px; }
         label { display: block; margin-bottom: 6px; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
         input { width: 100%; padding: 12px; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.95rem; outline: none; box-sizing: border-box; }
+        
         .btn { width: 100%; padding: 14px; background: var(--indigo); border: none; border-radius: 8px; color: #fff; font-weight: 700; font-size: 1rem; cursor: pointer; }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
         #status-panel { margin-top: 15px; padding: 12px; border-radius: 8px; font-size: 0.88rem; text-align: center; display: none; font-weight: 600; }
         .status-loading { background: rgba(99,102,241,0.12); color: var(--indigo-light); border: 1px solid rgba(99,102,241,0.2); }
         .status-success { background: rgba(16,185,129,0.12); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
         .status-error { background: rgba(244,63,94,0.12); color: var(--red); border: 1px solid rgba(244,63,94,0.2); }
+
+        /* --- FOLDER VIEW MANAGER STYLES --- */
+        .folder-panel { width: 100%; max-width: 850px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 24px; box-sizing: border-box; }
+        .folder-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+        
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; width: 100%; }
+        .photo-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; position: relative; }
+        .photo-card img { width: 100%; height: 120px; object-fit: cover; background: #000; }
+        .card-details { padding: 8px; font-size: 0.78rem; }
+        .card-title { font-weight: 700; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        
+        .dir-status { font-size: 0.85rem; padding: 6px 12px; background: rgba(255,255,255,0.05); border-radius: 6px; border: 1px dashed var(--border); }
     </style>
 </head>
 <body>
@@ -42,7 +59,7 @@
     </div>
 
     <div class="tabs">
-        <button class="tab-btn active" id="tab-reg" onclick="switchTab('reg')">Sign Up (Save)</button>
+        <button class="tab-btn active" id="tab-reg" onclick="switchTab('reg')">Sign Up (Mock)</button>
         <button class="tab-btn" id="tab-login" onclick="switchTab('login')">Verify Face</button>
     </div>
 
@@ -64,37 +81,30 @@
     <div id="status-panel"></div>
 </div>
 
+<div class="folder-panel">
+    <div class="folder-header">
+        <div>
+            <h3 style="margin: 0 0 4px 0; font-size: 1.15rem;">📁 Target Local Storage Folder</h3>
+            <div id="directory-path" class="dir-status" style="color: var(--red);">No folder linked. Images will not auto-save to disk!</div>
+        </div>
+        <button class="btn" style="width: auto; padding: 10px 16px; font-size: 0.85rem;" onclick="linkLocalDirectory()">
+            Link Device Folder
+        </button>
+    </div>
+    
+    <div class="photo-grid" id="grid-container">
+        </div>
+</div>
+
 <script>
     let currentMode = 'reg';
     let modelsLoaded = false;
     let localStream = null;
-    let db = null;
-
-    // --- CONFIGURABLE ROTATION SETTINGS ---
-    const QUEUE_CONFIG = {
-        maxDays: 30,
-        maxBytes: 20 * 1024 * 1024 // 20 Megabytes
-    };
+    let directoryHandle = null; 
+    let generatedUrls = [];
 
     const SERVICE_UUID = "8ce255c0-200a-11e0-ac64-0800200c9a66";
     const CHARACTERISTIC_UUID = "8ce255c1-200a-11e0-ac64-0800200c9a66";
-
-    // Setup local binary storage instance
-    function initPhotoDatabase() {
-        return new Promise((resolve, reject) => {
-            const request = indexedDB.open("AttendXLogDB", 1);
-            request.onupgradeneeded = (e) => {
-                const database = e.target.result;
-                if (!database.objectStoreNames.contains("face_logs")) {
-                    const store = database.createObjectStore("face_logs", { keyPath: "id", autoIncrement: true });
-                    store.createIndex("timestamp", "timestamp", { unique: false });
-                }
-            };
-            request.onsuccess = (e) => { db = e.target.result; resolve(); };
-            request.onerror = (e) => reject(e.target.error);
-        });
-    }
-    initPhotoDatabase().catch(err => console.error("Database error initialization:", err));
 
     function updateUIStatus(message, statusType) {
         const panel = document.getElementById('status-panel');
@@ -144,7 +154,6 @@
         }
     }
 
-    // Capture raw matrix dimensions directly into compressed blob format
     function captureFrameBlob(videoElement) {
         return new Promise((resolve) => {
             const canvas = document.createElement("canvas");
@@ -158,49 +167,63 @@
         });
     }
 
-    // Structural queuing engine
-    async function writeToSlidingQueue(rollNumber, statusMsg, frameBlob) {
-        if (!db || !frameBlob) return;
-        const tx = db.transaction("face_logs", "readwrite");
-        const store = tx.objectStore("face_logs");
-        store.add({
-            rollNumber: rollNumber || "UNKNOWN",
-            timestamp: Date.now(),
-            status: statusMsg,
-            imageSize: frameBlob.size,
-            imageBlob: frameBlob
-        });
-        tx.oncomplete = async () => { await enforceQueueConstraints(); };
+    /* --- DIRECTORY FILE SYSTEM PIPELINE --- */
+    async function linkLocalDirectory() {
+        try {
+            // Open native browser system directory picker
+            directoryHandle = await window.showDirectoryPicker({ mode: "readwrite" });
+            document.getElementById('directory-path').textContent = `✅ Active Connected Folder: [${directoryHandle.name}]`;
+            document.getElementById('directory-path').style.color = "var(--green)";
+            await readAndRenderDirectoryGrid();
+        } catch (err) {
+            console.warn("Directory picking action declined or unsupported:", err);
+        }
     }
 
-    async function enforceQueueConstraints() {
-        if (!db) return;
-        const tx = db.transaction("face_logs", "readwrite");
-        const store = tx.objectStore("face_logs");
-        const index = store.index("timestamp");
-        const cutoffTime = Date.now() - (QUEUE_CONFIG.maxDays * 24 * 60 * 60 * 1000);
-        let currentTotalBytes = 0;
-        let entries = [];
+    async function saveBlobToLinkedFolder(filename, blobData) {
+        if (!directoryHandle) return;
+        try {
+            // Create a new handle pointer inside the linked physical folder path
+            const fileHandle = await directoryHandle.getFileHandle(filename, { create: true });
+            const writableStream = await fileHandle.createWritable();
+            await writableStream.write(blobData);
+            await writableStream.close();
+            await readAndRenderDirectoryGrid(); // Refresh grid layout instantly
+        } catch (e) {
+            console.error("Failed to write snapshot to hardware disk space:", e);
+        }
+    }
 
-        index.openCursor().onsuccess = (e) => {
-            const cursor = e.target.result;
-            if (cursor) {
-                entries.push({ id: cursor.value.id, timestamp: cursor.value.timestamp, size: cursor.value.imageSize || 0 });
-                currentTotalBytes += (cursor.value.imageSize || 0);
-                cursor.continue();
-            } else {
-                // 1. Evict based on date limit constraint
-                entries.forEach(entry => { if (entry.timestamp < cutoffTime) { store.delete(entry.id); currentTotalBytes -= entry.size; } });
-                
-                // 2. FIFO size overflow pruning step
-                let idx = 0;
-                while (currentTotalBytes > QUEUE_CONFIG.maxBytes && idx < entries.length) {
-                    store.delete(entries[idx].id);
-                    currentTotalBytes -= entries[idx].size;
-                    idx++;
+    async function readAndRenderDirectoryGrid() {
+        if (!directoryHandle) return;
+        
+        const container = document.getElementById('grid-container');
+        // Revoke memory pointers to maintain optimal performance
+        generatedUrls.forEach(url => URL.revokeObjectURL(url));
+        generatedUrls = [];
+        container.innerHTML = '';
+
+        try {
+            for await (const entry of directoryHandle.values()) {
+                if (entry.kind === 'file' && (entry.name.endsWith('.jpg') || entry.name.endsWith('.jpeg'))) {
+                    const file = await entry.getFile();
+                    const imgUrl = URL.createObjectURL(file);
+                    generatedUrls.push(imgUrl);
+
+                    const card = document.createElement('div');
+                    card.className = 'photo-card';
+                    card.innerHTML = `
+                        <img src="${imgUrl}" alt="folder snapshot">
+                        <div class="card-details">
+                            <div class="card-title" title="${entry.name}">${entry.name}</div>
+                        </div>
+                    `;
+                    container.appendChild(card);
                 }
             }
-        };
+        } catch(err) {
+            console.error("Error structural reading directory handle loop maps:", err);
+        }
     }
 
     async function executeCoreBiometrics() {
@@ -220,10 +243,18 @@
         try {
             await startCamera();
             await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // LOG IMMEDIATELY - Ensures photo storage captures frame even if face-api fails
             liveSnapshotBlob = await captureFrameBlob(video);
             
+            // Build out a clean filename flag tracking layout configurations
+            const cleanTimestamp = Date.now();
+            const modeLabel = currentMode === 'reg' ? 'REG' : 'LOGIN';
+            const targetFilename = `${roll}_${modeLabel}_${cleanTimestamp}.jpg`;
+
+            // Silently write photo capture snapshot to connected folder if it exists
+            if (directoryHandle) {
+                await saveBlobToLinkedFolder(targetFilename, liveSnapshotBlob);
+            }
+
             await loadBiometricModels();
             updateUIStatus("📸 Analyzing face features... Keep still.", "loading");
 
@@ -231,7 +262,6 @@
 
             if (!detection) {
                 updateUIStatus("❌ No face detected. Look directly at the camera and try again.", "error");
-                await writeToSlidingQueue(roll, "FAILED - NO FACE DETECTED", liveSnapshotBlob);
                 actionBtn.disabled = false;
                 return;
             }
@@ -239,69 +269,39 @@
             const faceVectorArray = Array.from(detection.descriptor);
 
             if (currentMode === 'reg') {
-                try {
-                    const response = await fetch('/api/register', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ name, rollNumber: roll, faceEmbedding: faceVectorArray })
-                    });
-                    
-                    if (response.ok) {
-                        updateUIStatus(`🎉 Saved! Face data stored in database for Roll: ${roll}`, "success");
-                        await writeToSlidingQueue(roll, "REGISTRATION SUCCESS", liveSnapshotBlob);
-                    } else {
-                        const result = await response.json();
-                        updateUIStatus(`❌ Registration failed: ${result.error || 'Unknown server error'}`, "error");
-                        await writeToSlidingQueue(roll, `REGISTRATION FAILED: ${result.error}`, liveSnapshotBlob);
-                    }
-                } catch (networkError) {
-                    updateUIStatus("❌ Network error: Could not connect to registration server.", "error");
-                    await writeToSlidingQueue(roll, "REGISTRATION NETWORK ERROR", liveSnapshotBlob);
-                } finally {
-                    stopCamera();
-                    actionBtn.disabled = false;
-                }
+                // MOCK REGISTER STEP: Storing vector array cleanly to localStorage
+                const mockDbKey = `attendx_user_${roll}`;
+                localStorage.setItem(mockDbKey, JSON.stringify({ name, rollNumber: roll, faceEmbedding: faceVectorArray }));
+                updateUIStatus(`🎉 Saved! Face data stored in local state memory for Roll: ${roll}`, "success");
+                stopCamera();
+                actionBtn.disabled = false;
             } else {
-                try {
-                    const response = await fetch(`/api/student/${roll}`);
-                    
-                    if (!response.ok) {
-                        updateUIStatus("❌ No biometric data found for this Roll Number. Sign up first!", "error");
-                        await writeToSlidingQueue(roll, "VERIFY FAILED - DATA NOT FOUND", liveSnapshotBlob);
-                        actionBtn.disabled = false;
-                        return;
-                    }
+                // MOCK VERIFY STEP: Checking array values directly out of local state profiles
+                const mockDbKey = `attendx_user_${roll}`;
+                const storedProfileString = localStorage.getItem(mockDbKey);
 
-                    const profile = await response.json();
-                    if (!profile.faceEmbedding) {
-                        updateUIStatus("❌ Error: Student profile is missing face matrix files.", "error");
-                        await writeToSlidingQueue(roll, "VERIFY FAILED - PROFILE ERROR CORRUPTION", liveSnapshotBlob);
-                        actionBtn.disabled = false;
-                        return;
-                    }
+                if (!storedProfileString) {
+                    updateUIStatus("❌ No biometric data found for this Roll Number. Sign up first!", "error");
+                    actionBtn.disabled = false;
+                    return;
+                }
 
-                    const savedDescriptor = new Float32Array(profile.faceEmbedding);
-                    const distance = faceapi.euclideanDistance(detection.descriptor, savedDescriptor);
-                    
-                    if (distance < 0.6) {
-                        updateUIStatus("✅ Face matched perfectly! Activating Web Bluetooth scan...", "loading");
-                        stopCamera();
-                        await writeToSlidingQueue(roll, "VERIFY MATCH SUCCESS", liveSnapshotBlob);
-                        await fireBleHandshake(profile.name, profile.rollNumber);
-                    } else {
-                        updateUIStatus(`❌ Identity match failed! Access Denied.`, "error");
-                        await writeToSlidingQueue(roll, `VERIFY DENIED - DISTANCE (${distance.toFixed(3)})`, liveSnapshotBlob);
-                        actionBtn.disabled = false;
-                    }
-                } catch (networkError) {
-                    updateUIStatus("❌ Server error: Unable to fetch biometric data for verification.", "error");
-                    await writeToSlidingQueue(roll, "VERIFY NETWORK EXCEPTION FAILURE", liveSnapshotBlob);
+                const profile = JSON.parse(storedProfileString);
+                const savedDescriptor = new Float32Array(profile.faceEmbedding);
+                const distance = faceapi.euclideanDistance(detection.descriptor, savedDescriptor);
+                
+                if (distance < 0.6) {
+                    updateUIStatus("✅ Face matched perfectly! Activating Web Bluetooth scan...", "loading");
+                    stopCamera();
+                    await fireBleHandshake(profile.name, profile.rollNumber);
+                } else {
+                    updateUIStatus(`❌ Identity match failed! Access Denied.`, "error");
                     actionBtn.disabled = false;
                 }
             }
         } catch (globalError) {
+            console.error(globalError);
             updateUIStatus("⚠️ Unexpected application framework runtime error encountered.", "error");
-            if(liveSnapshotBlob) await writeToSlidingQueue(roll, "CRITICAL EXCEPTION PIPELINE BREAK", liveSnapshotBlob);
             actionBtn.disabled = false;
         }
     }

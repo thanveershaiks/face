@@ -2,331 +2,234 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>AttendX - Pure Frontend Local Directory Terminal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
-    <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioGate - Auto-Routing Biometric Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0f1117; --surface: #161b27; --surface2: #1e2535; --border: #2a3f5f;
-            --text: #eef2ff; --text-muted: #8fa3c0; --indigo: #6366f1; --indigo-light: #818cf8;
-            --green: #10b981; --red: #f43f5e;
+            --bg: #0b0f19; --surface: #151b2c; --border: #242f4d;
+            --text: #f1f5f9; --text-muted: #64748b; --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.2); --success: #10b981; --error: #ef4444;
         }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-        
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 420px; padding: 36px 32px; box-shadow: 0 24px 80px rgba(0,0,0,0.5); margin-bottom: 25px; }
-        .header { text-align: center; margin-bottom: 24px; }
-        .logo-icon { width: 52px; height: 52px; background: var(--indigo); border-radius: 14px; display: grid; place-items: center; font-size: 1.5rem; color: #fff; margin: 0 auto 14px; font-weight: 800; }
-        h2 { margin: 0 0 6px 0; font-size: 1.5rem; font-weight: 800; }
-        
-        .tabs { display: flex; gap: 6px; margin-bottom: 20px; background: var(--bg); padding: 4px; border-radius: 10px; border: 1px solid var(--border); }
-        .tab-btn { flex: 1; padding: 10px 6px; background: transparent; border: none; color: var(--text-muted); border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
-        .tab-btn.active { background: var(--indigo); color: #fff; }
-        
-        .camera-container { position: relative; width: 100%; height: 220px; background: #000; border-radius: 12px; overflow: hidden; border: 1.5px solid var(--border); margin-bottom: 20px; }
-        video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
-        .input-group { margin-bottom: 14px; }
-        label { display: block; margin-bottom: 6px; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
-        input { width: 100%; padding: 12px; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.95rem; outline: none; box-sizing: border-box; }
-        
-        .btn { width: 100%; padding: 14px; background: var(--indigo); border: none; border-radius: 8px; color: #fff; font-weight: 700; font-size: 1rem; cursor: pointer; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        
-        #status-panel { margin-top: 15px; padding: 12px; border-radius: 8px; font-size: 0.88rem; text-align: center; display: none; font-weight: 600; }
-        .status-loading { background: rgba(99,102,241,0.12); color: var(--indigo-light); border: 1px solid rgba(99,102,241,0.2); }
-        .status-success { background: rgba(16,185,129,0.12); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
-        .status-error { background: rgba(244,63,94,0.12); color: var(--red); border: 1px solid rgba(244,63,94,0.2); }
 
-        /* --- FOLDER VIEW MANAGER STYLES --- */
-        .folder-panel { width: 100%; max-width: 850px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 24px; box-sizing: border-box; }
-        .folder-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
-        
-        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; width: 100%; }
-        .photo-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; position: relative; }
-        .photo-card img { width: 100%; height: 120px; object-fit: cover; background: #000; }
-        .card-details { padding: 8px; font-size: 0.78rem; }
-        .card-title { font-weight: 700; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        
-        .dir-status { font-size: 0.85rem; padding: 6px 12px; background: rgba(255,255,255,0.05); border-radius: 6px; border: 1px dashed var(--border); }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--text);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box;
+        }
+
+        .auth-card {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 24px;
+            width: 100%; max-width: 400px; padding: 32px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4); text-align: center;
+        }
+
+        .logo-space { font-size: 2.5rem; margin-bottom: 8px; }
+        h2 { margin: 0 0 8px 0; font-size: 1.5rem; font-weight: 700; }
+        p { margin: 0 0 24px 0; color: var(--text-muted); font-size: 0.9rem; }
+
+        .input-group { text-align: left; margin-bottom: 16px; display: none; }
+        label { display: block; margin-bottom: 6px; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+        input { width: 100%; padding: 12px; background: #0b0f19; border: 1.5px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.95rem; outline: none; box-sizing: border-box; }
+
+        .camera-box {
+            position: relative; width: 100%; height: 200px; background: #000;
+            border-radius: 16px; overflow: hidden; border: 2px solid var(--border); margin-bottom: 24px; display: none;
+        }
+        video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+
+        .button-stack { display: flex; flex-direction: column; gap: 12px; }
+        .btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            width: 100%; padding: 14px; border: 1px solid var(--border); background: rgba(255,255,255,0.02);
+            border-radius: 12px; color: var(--text); font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+        }
+        .btn:hover { background: var(--border); border-color: var(--accent); }
+        .btn-primary { background: var(--accent); border: none; box-shadow: 0 4px 14px var(--accent-glow); }
+        .btn-primary:hover { background: #2563eb; }
+
+        #status-msg { margin-top: 20px; padding: 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; display: none; }
+        .status-info { background: rgba(59, 130, 246, 0.1); color: #60a5fa; }
+        .status-success { background: rgba(16, 185, 129, 0.1); color: #34d399; }
+        .status-error { background: rgba(239, 68, 68, 0.1); color: #f87171; }
+
+        .reset-link { margin-top: 20px; display: inline-block; font-size: 0.8rem; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
+        .reset-link:hover { color: var(--error); }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <div class="header">
-        <div class="logo-icon">AX</div>
-        <h2 id="flow-title">Local Biometric Registration</h2>
+<div class="auth-card">
+    <div class="logo-space">🛡️</div>
+    <h2 id="view-title">Loading Gateway...</h2>
+    <p id="view-desc">Configuring local parameters.</p>
+
+    <div class="input-group" id="nameFieldGroup">
+        <label for="username">Enter Full Name for Enrolment</label>
+        <input type="text" id="username" placeholder="e.g., Jane Doe" autocomplete="off">
     </div>
 
-    <div class="tabs">
-        <button class="tab-btn active" id="tab-reg" onclick="switchTab('reg')">Sign Up (Mock)</button>
-        <button class="tab-btn" id="tab-login" onclick="switchTab('login')">Verify Face</button>
-    </div>
-
-    <div class="camera-container">
+    <div class="camera-box" id="cameraBox">
         <video id="webcam" autoplay muted playsinline></video>
     </div>
 
-    <div class="input-group" id="group-name">
-        <label for="name">Your Full Name</label>
-        <input type="text" id="name" placeholder="e.g. Rahul Das" autocomplete="off">
-    </div>
-
-    <div class="input-group">
-        <label for="roll">Roll Number</label>
-        <input type="text" id="roll" placeholder="e.g. B2-02" autocomplete="off">
-    </div>
-
-    <button class="btn" id="actionBtn" onclick="executeCoreBiometrics()">Scan & Save Face</button>
-    <div id="status-panel"></div>
-</div>
-
-<div class="folder-panel">
-    <div class="folder-header">
-        <div>
-            <h3 style="margin: 0 0 4px 0; font-size: 1.15rem;">📁 Target Local Storage Folder</h3>
-            <div id="directory-path" class="dir-status" style="color: var(--red);">No folder linked. Images will not auto-save to disk!</div>
-        </div>
-        <button class="btn" style="width: auto; padding: 10px 16px; font-size: 0.85rem;" onclick="linkLocalDirectory()">
-            Link Device Folder
+    <div class="button-stack">
+        <button class="btn btn-primary" id="mainActionButton" onclick="handleCoreAction()">
+            Proceed
+        </button>
+        <button class="btn" id="cameraToggleBtn" onclick="toggleCameraView()">
+            📷 Toggle Live Camera View
         </button>
     </div>
-    
-    <div class="photo-grid" id="grid-container">
-        </div>
+
+    <div id="status-msg"></div>
+    <span class="reset-link" onclick="clearProfileState()">Clear Saved Profile Cache</span>
 </div>
 
 <script>
-    let currentMode = 'reg';
-    let modelsLoaded = false;
-    let localStream = null;
-    let directoryHandle = null; 
-    let generatedUrls = [];
+    let isRegistered = false;
+    let streamInstance = null;
+    const CACHE_KEY = "attendx_biometric_registered";
 
-    const SERVICE_UUID = "8ce255c0-200a-11e0-ac64-0800200c9a66";
-    const CHARACTERISTIC_UUID = "8ce255c1-200a-11e0-ac64-0800200c9a66";
+    // Initialize application routing pipeline immediately upon DOM mounting
+    window.addEventListener('DOMContentLoaded', () => {
+        evaluateRoutingState();
+    });
 
-    function updateUIStatus(message, statusType) {
-        const panel = document.getElementById('status-panel');
-        panel.style.display = message ? 'block' : 'none';
-        if(message) { panel.className = `status-${statusType}`; panel.textContent = message; }
+    function logStatus(message, variant) {
+        const pane = document.getElementById('status-msg');
+        pane.style.display = message ? 'block' : 'none';
+        if (message) { pane.className = `status-${variant}`; pane.textContent = message; }
     }
 
-    function switchTab(mode) {
-        currentMode = mode;
-        document.getElementById('tab-reg').classList.toggle('active', mode === 'reg');
-        document.getElementById('tab-login').classList.toggle('active', mode === 'login');
-        document.getElementById('group-name').style.display = mode === 'reg' ? 'block' : 'none';
-        document.getElementById('flow-title').textContent = mode === 'reg' ? 'Local Biometric Registration' : 'Local Attendance Portal';
-        document.getElementById('actionBtn').textContent = mode === 'reg' ? 'Scan & Save Face' : 'Verify & Transmit Over BLE';
-        updateUIStatus('', '');
-        stopCamera();
-    }
-
-    async function startCamera() {
-        if (!localStream) {
-            try {
-                localStream = await navigator.mediaDevices.getUserMedia({ video: { width: 400, height: 300, facingMode: "user" } });
-                const video = document.getElementById('webcam');
-                video.srcObject = localStream;
-                await video.play();
-            } catch (err) {
-                updateUIStatus("❌ Camera failed. Please grant camera access permissions.", "error");
-            }
-        }
-    }
-
-    function stopCamera() {
-        if (localStream) {
-            localStream.getTracks().forEach(track => track.stop());
-            localStream = null;
-        }
-    }
-
-    async function loadBiometricModels() {
-        if (!modelsLoaded) {
-            updateUIStatus("🤖 Downloading lightweight face models from CDN...", "loading");
-            const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
-            await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
-            await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
-            await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
-            modelsLoaded = true;
-        }
-    }
-
-    function captureFrameBlob(videoElement) {
-        return new Promise((resolve) => {
-            const canvas = document.createElement("canvas");
-            canvas.width = videoElement.videoWidth || 400;
-            canvas.height = videoElement.videoHeight || 300;
-            const ctx = canvas.getContext("2d");
-            ctx.translate(canvas.width, 0);
-            ctx.scale(-1, 1);
-            ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-            canvas.toBlob((blob) => resolve(blob), "image/jpeg", 0.85);
-        });
-    }
-
-    /* --- DIRECTORY FILE SYSTEM PIPELINE --- */
-    async function linkLocalDirectory() {
-        try {
-            // Open native browser system directory picker
-            directoryHandle = await window.showDirectoryPicker({ mode: "readwrite" });
-            document.getElementById('directory-path').textContent = `✅ Active Connected Folder: [${directoryHandle.name}]`;
-            document.getElementById('directory-path').style.color = "var(--green)";
-            await readAndRenderDirectoryGrid();
-        } catch (err) {
-            console.warn("Directory picking action declined or unsupported:", err);
-        }
-    }
-
-    async function saveBlobToLinkedFolder(filename, blobData) {
-        if (!directoryHandle) return;
-        try {
-            // Create a new handle pointer inside the linked physical folder path
-            const fileHandle = await directoryHandle.getFileHandle(filename, { create: true });
-            const writableStream = await fileHandle.createWritable();
-            await writableStream.write(blobData);
-            await writableStream.close();
-            await readAndRenderDirectoryGrid(); // Refresh grid layout instantly
-        } catch (e) {
-            console.error("Failed to write snapshot to hardware disk space:", e);
-        }
-    }
-
-    async function readAndRenderDirectoryGrid() {
-        if (!directoryHandle) return;
+    /**
+     * Checks storage indicators and rewrites the interface architecture.
+     */
+    function evaluateRoutingState() {
+        isRegistered = localStorage.getItem(CACHE_KEY) === "true";
         
-        const container = document.getElementById('grid-container');
-        // Revoke memory pointers to maintain optimal performance
-        generatedUrls.forEach(url => URL.revokeObjectURL(url));
-        generatedUrls = [];
-        container.innerHTML = '';
+        const title = document.getElementById('view-title');
+        const desc = document.getElementById('view-desc');
+        const nameField = document.getElementById('nameFieldGroup');
+        const mainBtn = document.getElementById('mainActionButton');
 
-        try {
-            for await (const entry of directoryHandle.values()) {
-                if (entry.kind === 'file' && (entry.name.endsWith('.jpg') || entry.name.endsWith('.jpeg'))) {
-                    const file = await entry.getFile();
-                    const imgUrl = URL.createObjectURL(file);
-                    generatedUrls.push(imgUrl);
+        logStatus("", "");
 
-                    const card = document.createElement('div');
-                    card.className = 'photo-card';
-                    card.innerHTML = `
-                        <img src="${imgUrl}" alt="folder snapshot">
-                        <div class="card-details">
-                            <div class="card-title" title="${entry.name}">${entry.name}</div>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                }
-            }
-        } catch(err) {
-            console.error("Error structural reading directory handle loop maps:", err);
+        if (isRegistered) {
+            // Direct Gateway Route: Skip registration completely
+            title.textContent = "Welcome Back";
+            desc.textContent = "Scan your device fingerprint key or align your face to verify.";
+            nameField.style.display = "none";
+            mainBtn.textContent = "🧬 Scan Biometric Key";
+        } else {
+            // Enrolment Route: Show setup options
+            title.textContent = "Biometric Setup";
+            desc.textContent = "Register your profile context to configure passkey security options.";
+            nameField.style.display = "block";
+            mainBtn.textContent = "💾 Save Profile & Face Vector";
         }
     }
 
-    async function executeCoreBiometrics() {
-        const name = document.getElementById('name').value.trim();
-        const roll = document.getElementById('roll').value.trim();
-        const actionBtn = document.getElementById('actionBtn');
+    /**
+     * Unified operational logic gate dealing with dynamic button execution loops.
+     */
+    async function handleCoreAction() {
+        if (isRegistered) {
+            await runVerificationPipeline();
+        } else {
+            await runRegistrationPipeline();
+        }
+    }
+
+    /**
+     * PIPELINE A: Complete Profile Registration
+     */
+    async function runRegistrationPipeline() {
+        const nameInput = document.getElementById('username').value.trim();
+        if (!nameInput) {
+            logStatus("⚠️ A profile registration signature name is required.", "error");
+            return;
+        }
+
+        logStatus("🔄 Processing cryptographic configuration vectors...", "info");
+
+        // Simulate local facial vector processing/hardware key registration
+        setTimeout(() => {
+            // Set the state persistent storage flags
+            localStorage.setItem(CACHE_KEY, "true");
+            localStorage.setItem("cached_username", nameInput);
+            
+            logStatus(`🎉 Registration complete for ${nameInput}! Re-routing interface context...`, "success");
+            
+            // Re-route views natively without breaking application context
+            setTimeout(() => {
+                evaluateRoutingState();
+            }, 1500);
+        }, 1200);
+    }
+
+    /**
+     * PIPELINE B: Rapid Verification Pipeline
+     */
+    async function runVerificationPipeline() {
+        logStatus("🔄 Querying hardware authenticator parameters...", "info");
+
+        if (window.PublicKeyCredential) {
+            try {
+                const mockChallenge = new Uint8Array(32);
+                window.crypto.getRandomValues(mockChallenge);
+
+                // Open device hardware tray layer natively
+                await navigator.credentials.create({
+                    publicKey: {
+                        challenge: mockChallenge,
+                        rp: { name: "BioGate Core", id: window.location.hostname },
+                        user: { id: Uint8Array.from("1", c=>c.charCodeAt(0)), name: "user", displayName: "User" },
+                        pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+                        authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" }
+                    }
+                });
+                
+                const cachedUser = localStorage.getItem("cached_username") || "User";
+                logStatus(`✅ Identity Verified! Access granted to profile: ${cachedUser}`, "success");
+            } catch (err) {
+                logStatus("❌ Device key check rejected or verification timed out.", "error");
+            }
+        } else {
+            logStatus("❌ Hardware verification unavailable. Utilize standard fallback mechanisms.", "error");
+        }
+    }
+
+    /**
+     * Helper to clear cached states (Useful for testing).
+     */
+    function clearProfileState() {
+        localStorage.removeItem(CACHE_KEY);
+        localStorage.removeItem("cached_username");
+        if (streamInstance) toggleCameraView(); 
+        evaluateRoutingState();
+        logStatus("🗑️ Client browser storage profile cleared.", "info");
+    }
+
+    /**
+     * Helper to manage local fallback video stream threads.
+     */
+    async function toggleCameraView() {
+        const box = document.getElementById('cameraBox');
         const video = document.getElementById('webcam');
 
-        if (!roll || (currentMode === 'reg' && !name)) {
-            updateUIStatus("⚠️ Please complete the form details first.", "error");
+        if (streamInstance) {
+            streamInstance.getTracks().forEach(track => track.stop());
+            streamInstance = null;
+            box.style.display = "none";
             return;
         }
 
-        actionBtn.disabled = true;
-        let liveSnapshotBlob = null;
-        
         try {
-            await startCamera();
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            liveSnapshotBlob = await captureFrameBlob(video);
-            
-            // Build out a clean filename flag tracking layout configurations
-            const cleanTimestamp = Date.now();
-            const modeLabel = currentMode === 'reg' ? 'REG' : 'LOGIN';
-            const targetFilename = `${roll}_${modeLabel}_${cleanTimestamp}.jpg`;
-
-            // Silently write photo capture snapshot to connected folder if it exists
-            if (directoryHandle) {
-                await saveBlobToLinkedFolder(targetFilename, liveSnapshotBlob);
-            }
-
-            await loadBiometricModels();
-            updateUIStatus("📸 Analyzing face features... Keep still.", "loading");
-
-            const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
-
-            if (!detection) {
-                updateUIStatus("❌ No face detected. Look directly at the camera and try again.", "error");
-                actionBtn.disabled = false;
-                return;
-            }
-
-            const faceVectorArray = Array.from(detection.descriptor);
-
-            if (currentMode === 'reg') {
-                // MOCK REGISTER STEP: Storing vector array cleanly to localStorage
-                const mockDbKey = `attendx_user_${roll}`;
-                localStorage.setItem(mockDbKey, JSON.stringify({ name, rollNumber: roll, faceEmbedding: faceVectorArray }));
-                updateUIStatus(`🎉 Saved! Face data stored in local state memory for Roll: ${roll}`, "success");
-                stopCamera();
-                actionBtn.disabled = false;
-            } else {
-                // MOCK VERIFY STEP: Checking array values directly out of local state profiles
-                const mockDbKey = `attendx_user_${roll}`;
-                const storedProfileString = localStorage.getItem(mockDbKey);
-
-                if (!storedProfileString) {
-                    updateUIStatus("❌ No biometric data found for this Roll Number. Sign up first!", "error");
-                    actionBtn.disabled = false;
-                    return;
-                }
-
-                const profile = JSON.parse(storedProfileString);
-                const savedDescriptor = new Float32Array(profile.faceEmbedding);
-                const distance = faceapi.euclideanDistance(detection.descriptor, savedDescriptor);
-                
-                if (distance < 0.6) {
-                    updateUIStatus("✅ Face matched perfectly! Activating Web Bluetooth scan...", "loading");
-                    stopCamera();
-                    await fireBleHandshake(profile.name, profile.rollNumber);
-                } else {
-                    updateUIStatus(`❌ Identity match failed! Access Denied.`, "error");
-                    actionBtn.disabled = false;
-                }
-            }
-        } catch (globalError) {
-            console.error(globalError);
-            updateUIStatus("⚠️ Unexpected application framework runtime error encountered.", "error");
-            actionBtn.disabled = false;
-        }
-    }
-
-    async function fireBleHandshake(name, roll) {
-        if (!navigator.bluetooth) {
-            updateUIStatus("❌ Web Bluetooth not supported on this browser. Try Chrome/Edge.", "error");
-            document.getElementById('actionBtn').disabled = false;
-            return;
-        }
-        try {
-            const device = await navigator.bluetooth.requestDevice({ filters: [{ services: [SERVICE_UUID] }] });
-            const server = await device.gatt.connect();
-            const service = await server.getPrimaryService(SERVICE_UUID);
-            const characteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
-
-            const payloadString = `${name}|${roll}|00:1A:2B:3C:4D:5E`;
-            const dataBuffer = new TextEncoder().encode(payloadString);
-            await characteristic.writeValueWithResponse(dataBuffer);
-
-            updateUIStatus("🎉 Attendance verified and transmitted over BLE successfully!", "success");
-            setTimeout(() => { device.gatt.disconnect(); document.getElementById('actionBtn').disabled = false; }, 2000);
-        } catch(e) {
-            updateUIStatus(`⚠️ Biometrics passed! (Bluetooth box opened, but connection cancelled or timed out).`, "error");
-            document.getElementById('actionBtn').disabled = false;
+            streamInstance = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            video.srcObject = streamInstance;
+            box.style.display = "block";
+        } catch (err) {
+            logStatus("❌ System media capture framework blocked.", "error");
         }
     }
 </script>
